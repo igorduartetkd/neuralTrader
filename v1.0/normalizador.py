@@ -47,12 +47,14 @@ for linha in linhas_arq[::-1]:
 
 
 
+
+''' # NORMALIZADOR BOSTA
 list_normalizada= preprocessing.normalize([list_ultimo, list_abertura, list_maximo, list_minimo,list_volume,
                                            list_variacao, list_ifr14, list_linha_macd, list_linha_sinal,
                                            list_histograma_macd, list_mma10, list_didi_baixa, list_didi_alta,
                                            list_cruzamento_didi, list_bollinger_inferior, list_bollinger_superior,
                                            list_bollinger_fechamento])
-
+'''
 
 for i in range(0, len(list_normalizada[0]), 1):
     arq_normalizado.write(list_data[i] + ' ' +

@@ -23,7 +23,7 @@ list_bollinger_superior = []
 list_bollinger_inferior = []
 list_bollinger_fechamento = []
 
-for linha in linhas_arq[:1000]:
+for linha in linhas_arq[:200]:
     splitado = linha.split(' ')
     list_data.append(splitado[0])
     list_ultimo.append(float(splitado[1]))

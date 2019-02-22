@@ -22,15 +22,24 @@ for linha in linhas_arq:
     list_entrada.append([float(splitado[0]), float(splitado[1])])
     list_y_desejado.append([float(splitado[2])])
 '''
-qtd_neuronios = [21, 23, 1]
+qtd_neuronios = [17, 23, 1]
 
-funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
                     [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
                     [4]]
+
+for neuronios, funcoes in zip(qtd_neuronios, funcoes_ativacao):
+    if neuronios != len(funcoes):
+        input("Camada com {} neuronios definida, porem {} funcoes de ativacoes definidas".format(neuronios,
+                                                                                                        len(funcoes)))
 
 for linha in linhas_arq:
     linha = linha.replace('\n', '').strip()
     splitado = linha.split(' ')
+    if len(splitado) - 1 != qtd_neuronios[0]:
+        input("Entrada definida com {} neuronios, porem contem {} no arquivo lido".format(qtd_neuronios[0],
+                                                                                          len(splitado) - 1))
+
     list_y_desejado.append([float(splitado[qtd_neuronios[0]])])
     list_entrada.append([float(splitado[i]) for i in range(qtd_neuronios[0])])
 # qtd_neuronios = [17, 20, 1]

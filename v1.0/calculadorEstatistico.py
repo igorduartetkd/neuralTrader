@@ -196,6 +196,22 @@ def bandas_bollinger(dados):
     return [banda_inferior_saida, banda_superior_saida, fechamento_saida]
 
 
+def normalizar(dados):
+    Xmin = min(dados)
+    Xmax = max(dados)
+    Xnmin = -1
+    Xnmax = 1
+    normalizado = [(Xnmax - Xnmin)*(x - Xmin)/(Xmax - Xmin) + Xnmin for x in dados]
+    return Xmin, Xmax, normalizado
+
+def desnormalizar(xmin, xmax, normalizado):
+    Xnmin = -1
+    Xnmax = 1
+    desnormalizado = [round((x - Xnmin)*(xmax - xmin)/(Xnmax - Xnmin) + xmin, 2) for x in normalizado]
+    return desnormalizado
+
+'''
+
 indice_forca = ifr(list_ultimo, 14)
 print(len(indice_forca))
 
@@ -255,4 +271,12 @@ for i in range(len(list_ultimo)):
                     str(bandasuperior[i]) + ' ' +
                     str(fechamento[i]) + '\n')
 
+
+'''
+mi, ma, dados = normalizar(list_ultimo)
+print("minimo {} maximo {}".format(mi, ma))
+volta = desnormalizar(mi, ma, dados)
+for x, y in zip(list_ultimo, volta):
+    if x != y:
+        print("x: {} y: {}".format(x, y))
 

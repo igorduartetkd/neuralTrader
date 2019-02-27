@@ -1,4 +1,4 @@
-
+'''
 arq1 = open("dadosSeparados2000.txt", 'r')
 linhas_arq1 = arq1.readlines()
 
@@ -21,7 +21,7 @@ for linha in linhas_arq1:
     list_minimo.append(float(splitado[4]))
     list_volume.append(float(splitado[5]))
     list_variacao.append(float(splitado[6].replace('\n', '')))
-
+'''
 
 def ifr(dados, numero_periodos=14):
     dimensao = len(dados)
@@ -250,6 +250,9 @@ print(len(fechamento))
 # print(bandasuperior)
 # print(fechamento)
 
+
+
+
 # salvando os dados no arquivo texto
 for i in range(len(list_ultimo)):
     arq_saida.write(str(list_data[i]) + ' ' +
@@ -272,11 +275,11 @@ for i in range(len(list_ultimo)):
                     str(fechamento[i]) + '\n')
 
 
-'''
+
 mi, ma, dados = normalizar(list_ultimo)
 print("minimo {} maximo {}".format(mi, ma))
 volta = desnormalizar(mi, ma, dados)
 for x, y in zip(list_ultimo, volta):
     if x != y:
         print("x: {} y: {}".format(x, y))
-
+'''

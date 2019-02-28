@@ -39,5 +39,5 @@ def get_treinamento(n_periodos, qtd_testes):
         teste.append(list_ultimo[i + n_periodos])
         mini, maxi, teste = normalizar(teste)
         testes.append(teste)
-
+    print(testes)
     return testes

@@ -8,10 +8,11 @@ list_y_desejado = []
 '''
 n_periodos = 17
 prepararTreinamento.preparar()
-qtd_neuronios = [n_periodos, 17, 1]
+qtd_neuronios = [n_periodos, 13, 4, 1]
 
 funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                    [4, 4, 4, 4],
                     [4]]
 
 for neuronios, funcoes in zip(qtd_neuronios, funcoes_ativacao):
@@ -19,30 +20,9 @@ for neuronios, funcoes in zip(qtd_neuronios, funcoes_ativacao):
         input("Camada com {} neuronios definida, porem {} funcoes de ativacoes definidas".format(neuronios,
                                                                                                 len(funcoes)))
 
-'''
-for linha in linhas_arq:
-    linha = linha.replace('\n', '').strip()
-    splitado = linha.split(' ')
-    if len(splitado) - 1 != qtd_neuronios[0]:
-        input("Entrada definida com {} neuronios, porem contem {} no arquivo lido".format(qtd_neuronios[0],
-                                                                                          len(splitado) - 1))
 
-    list_y_desejado.append([float(splitado[qtd_neuronios[0]])])
-    list_entrada.append([float(splitado[i]) for i in range(qtd_neuronios[0])])
-'''
-# qtd_neuronios = [17, 20, 1]
-# funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-#                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3],
-#                    [3]]
-
-'''
-funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-                    [3]]
-                    '''
-
-rna = rnamlp(qtd_neuronios, taxa_aprendizagem=0.01, funcoes_ativacao=funcoes_ativacao, limiar_parada=0.001)
-rna.treinar(prepararTreinamento.get_treinamento(n_periodos, 50))
+rna = rnamlp(qtd_neuronios, taxa_aprendizagem=0.1, funcoes_ativacao=funcoes_ativacao, limiar_parada=0.001)
+rna.treinar(prepararTreinamento.get_treinamento(n_periodos, 10))
 camadas, biases, funcoes_ativacao = rna.extrair_rede()
 arq = open("redeNeuralAumentoExtraida.txt", 'w')
 

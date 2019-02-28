@@ -39,9 +39,11 @@ class rnamlp():
         for camada in self.__camadas[::-1]:
             erros = camada.corrigir(erros)
 
-    def __ciclo_treinamento(self, entradas, saidas):
+    def __ciclo_treinamento(self, testes):
         erro_medio_quadratico = 0
-        for entrada, saidas_esperadas in zip(entradas, saidas):
+        for teste in testes:
+            entrada = teste[:-1]
+            saidas_esperadas = teste[-1:]
             saida_rede = self.forward(entrada)
             erros = [saida_esperada - saida for saida_esperada, saida in zip(saidas_esperadas, saida_rede)]
             self.backward(erros)
@@ -49,14 +51,14 @@ class rnamlp():
             erro_quadratico /= 2
             erro_medio_quadratico += erro_quadratico
 
-        erro_medio_quadratico /= len(entradas)
+        erro_medio_quadratico /= len(testes)
         return erro_medio_quadratico
 
-    def treinar(self, entradas, saidas, ciclos = 1000000):
+    def treinar(self, testes, ciclos = 1000000):
 
         erro_medio_quadratico_anterior = 0
         for ciclo in range(ciclos):
-            erro_medio_quadratico = self.__ciclo_treinamento(entradas, saidas)
+            erro_medio_quadratico = self.__ciclo_treinamento(testes)
             print("Ciclo {}  erro medio quadratico {}".format(str(ciclo), str(erro_medio_quadratico)))
             if erro_medio_quadratico <= self.__limiar_parada:
                 print("Atingiu o limiar de parada {} e {}".format(

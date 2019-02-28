@@ -1,23 +1,25 @@
-
+import prepararTreinamento
 from rnamlp import rnamlp
-
+'''
 arq = open("dadosTreinamentoAumento.txt", 'r')
 linhas_arq = arq.readlines()
 list_entrada = []
 list_y_desejado = []
-
-
-qtd_neuronios = [17, 23, 1]
+'''
+n_periodos = 17
+prepararTreinamento.preparar()
+qtd_neuronios = [n_periodos, 17, 1]
 
 funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
                     [4]]
 
 for neuronios, funcoes in zip(qtd_neuronios, funcoes_ativacao):
     if neuronios != len(funcoes):
         input("Camada com {} neuronios definida, porem {} funcoes de ativacoes definidas".format(neuronios,
-                                                                                                        len(funcoes)))
+                                                                                                len(funcoes)))
 
+'''
 for linha in linhas_arq:
     linha = linha.replace('\n', '').strip()
     splitado = linha.split(' ')
@@ -27,6 +29,7 @@ for linha in linhas_arq:
 
     list_y_desejado.append([float(splitado[qtd_neuronios[0]])])
     list_entrada.append([float(splitado[i]) for i in range(qtd_neuronios[0])])
+'''
 # qtd_neuronios = [17, 20, 1]
 # funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
 #                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3],
@@ -38,8 +41,8 @@ funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
                     [3]]
                     '''
 
-rna = rnamlp(qtd_neuronios, taxa_aprendizagem=0.001, funcoes_ativacao=funcoes_ativacao, limiar_parada=0.001)
-rna.treinar(list_entrada, list_y_desejado)
+rna = rnamlp(qtd_neuronios, taxa_aprendizagem=0.01, funcoes_ativacao=funcoes_ativacao, limiar_parada=0.001)
+rna.treinar(prepararTreinamento.get_treinamento(n_periodos, 50))
 camadas, biases, funcoes_ativacao = rna.extrair_rede()
 arq = open("redeNeuralAumentoExtraida.txt", 'w')
 

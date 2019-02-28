@@ -196,18 +196,15 @@ def bandas_bollinger(dados):
     return [banda_inferior_saida, banda_superior_saida, fechamento_saida]
 
 
-def normalizar(dados):
+def normalizar(dados, xnmin=-1, xnmax=1):
     Xmin = min(dados)
     Xmax = max(dados)
-    Xnmin = -1
-    Xnmax = 1
-    normalizado = [(Xnmax - Xnmin)*(x - Xmin)/(Xmax - Xmin) + Xnmin for x in dados]
+    normalizado = [(xnmax - xnmin) * (x - Xmin) / (Xmax - Xmin) + xnmin for x in dados]
     return Xmin, Xmax, normalizado
 
-def desnormalizar(xmin, xmax, normalizado):
-    Xnmin = -1
-    Xnmax = 1
-    desnormalizado = [round((x - Xnmin)*(xmax - xmin)/(Xnmax - Xnmin) + xmin, 2) for x in normalizado]
+
+def desnormalizar(xmin, xmax, normalizado, xnmin=-1, xnmax=1):
+    desnormalizado = [round((x - xnmin)*(xmax - xmin)/(xnmax - xnmin) + xmin, 2) for x in normalizado]
     return desnormalizado
 
 '''

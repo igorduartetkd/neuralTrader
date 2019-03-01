@@ -79,12 +79,11 @@ class rnamlp():
         falso_negativo = 0
         for entrada, saidas_esperadas in zip(entradas, saidas):
             saidas_rede = self.forward(entrada)
-            erros = [saida_esperada - saida for saida_esperada, saida in zip(saidas_esperadas, saidas_rede)]
-            # print("saida esperada {} saida da rede {}".format(str(saidas_esperadas[0]), str(saidas_rede[0])))
-            print("Saida esperada {} saida da rede {}".format(saidas_esperadas[0], saidas_rede[0]))
-            if erros == [0] * len(erros):
-                acertos += 1
             if saida_binaria:
+                erros = [round(saida_esperada - saida) for saida_esperada, saida in zip(saidas_esperadas, saidas_rede)]
+                print("Saida esperada {} saida da rede {}".format(saidas_esperadas[0], saidas_rede[0]))
+                if erros == [0] * len(erros):
+                    acertos += 1
                 s_esp = saidas_esperadas[0]
                 s_rede = saidas_rede[0]
                 print("saida esperada {} saida da rede {}".format(s_esp, s_rede))
@@ -96,7 +95,11 @@ class rnamlp():
                     negativo += 1
                 elif (round(s_esp) == 0 or round(s_esp) == -1) and round(s_rede) != round(s_esp):
                     falso_positivo += 1
-
+            else: # saida nao binaria
+                erros = [saida_esperada - saida for saida_esperada, saida in zip(saidas_esperadas, saidas_rede)]
+                print("Saida esperada {} saida da rede {}".format(saidas_esperadas[0], saidas_rede[0]))
+                if erros == [0] * len(erros):
+                    acertos += 1
         if saida_binaria:
             return acertos, positivo, negativo, falso_positivo, falso_negativo
         else:

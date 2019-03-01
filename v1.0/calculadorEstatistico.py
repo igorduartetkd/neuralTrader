@@ -23,6 +23,7 @@ for linha in linhas_arq1:
     list_variacao.append(float(splitado[6].replace('\n', '')))
 '''
 
+
 def ifr(dados, numero_periodos=14):
     dimensao = len(dados)
     ifr_saida = [0.]
@@ -36,7 +37,6 @@ def ifr(dados, numero_periodos=14):
             soma_ganhos += variacao
         else:
             soma_perdas -= variacao
-
 
     # primeiro ganho medio e perda media
     ganho_medio = soma_ganhos / numero_periodos
@@ -174,7 +174,6 @@ def desvio_padrao(dados, epocas):
     return desvio_saida
 
 
-
 def bandas_bollinger(dados):
     banda_superior_saida = []
     banda_inferior_saida = []
@@ -191,7 +190,6 @@ def bandas_bollinger(dados):
             fechamento_saida.append(1)
         else:
             fechamento_saida.append(0)
-
 
     return [banda_inferior_saida, banda_superior_saida, fechamento_saida]
 

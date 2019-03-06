@@ -18,7 +18,7 @@ def preparar():
     arq1 = open(nome_arq_leitura, 'r')
     linhas_arq1 = arq1.readlines()
 
-    for linha in linhas_arq1[::-1]:
+    for linha in linhas_arq1[2000:]:
         splitado = linha.strip(' \n').split(' ')
         list_data.append(splitado[0])
         list_ultimo.append(float(splitado[1]))
@@ -67,7 +67,7 @@ def get_treinamento(n_periodos, qtd_testes, tipo_teste='aumento'):
         armazenar_teste(arq_aumento, mini, maxi, teste_aumento, resposta)
         testes_aumento.append(teste_aumento)
         saidas_aumento.append([resposta])
-
+        arq_teste.write(str(resposta ) + '\n')
         # teste de adivinhar normaliza entrada e saida
         teste_adivinha.append(list_ultimo[i + n_periodos])
         mini, maxi, teste_adivinha = normalizar(teste_adivinha)
@@ -81,10 +81,13 @@ def get_treinamento(n_periodos, qtd_testes, tipo_teste='aumento'):
 
 
 def armazenar_teste(arq, mini, maxi, teste, saida):
-    arq.write(str(mini) + ' ' + str(maxi) + '\n')
+    #arq.write(str(mini) + ' ' + str(maxi) + '\n')
     for i in teste:
         arq.write(str(i) + ' ')
     arq.write(str(saida) + '\n')
 
-#preparar()
-#get_treinamento(20, 100)
+
+arq_teste = open('arq-saida.txt', 'w')
+
+preparar()
+get_treinamento(20, 2000)

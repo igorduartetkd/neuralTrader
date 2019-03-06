@@ -4,7 +4,7 @@ text = file.readlines()[1:]
 
 registro = []
 
-for linha in text:
+for linha in text[::-1]:
     dia = linha[1:3]
     mes = linha[4:6]
     ano = linha[7:11]

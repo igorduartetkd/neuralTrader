@@ -6,12 +6,12 @@ linhas_arq = arq.readlines()
 list_entrada = []
 list_y_desejado = []
 '''
-n_periodos = 17
+n_periodos = 20
 prepararTreinamento.preparar()
-qtd_neuronios = [n_periodos, 17, 1]
+qtd_neuronios = [n_periodos, 20, 1]
 
-funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+funcoes_ativacao = [[4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
                     [4]]
 '''
 funcoes_ativacao = [[7, 7, 7, 7, 7, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
@@ -24,8 +24,9 @@ for neuronios, funcoes in zip(qtd_neuronios, funcoes_ativacao):
                                                                                                 len(funcoes)))
 
 
-rna = rnamlp(qtd_neuronios, taxa_aprendizagem=0.01, funcoes_ativacao=funcoes_ativacao, limiar_parada=0.01)
-rna.treinar(prepararTreinamento.get_treinamento(n_periodos, 500))
+rna = rnamlp(qtd_neuronios, taxa_aprendizagem=0.001, funcoes_ativacao=funcoes_ativacao, limiar_parada=0.01)
+entradas, saidas = prepararTreinamento.get_treinamento(n_periodos, 100)
+rna.treinar(entradas, saidas)
 camadas, biases, funcoes_ativacao = rna.extrair_rede()
 arq = open("redeNeuralAumentoExtraida.txt", 'w')
 

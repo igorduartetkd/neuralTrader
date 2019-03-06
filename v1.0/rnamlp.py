@@ -5,9 +5,14 @@ import numpy as np
 
 
 class rnamlp():
-    def __init__(self, qtd_neuronios_camadas=[2, 2, 1], taxa_aprendizagem=0.4, funcoes_ativacao=[[4, 4], [4, 4], [1]], limiar_parada=0.01):
+    def __init__(self, qtd_neuronios_camadas=[2, 2, 1],
+                 taxa_aprendizagem=0.4,
+                 funcoes_ativacao=[[4, 4], [4, 4], [1]],
+                 limiar_parada=0.01,
+                 com_camada_entrada=True):
         self.__limiar_parada = limiar_parada
         self.__camadas = [Camada(qtd_neuronios_camadas[0], taxa_aprendizagem, funcoes_ativacao=funcoes_ativacao[0])]
+        self.__com_camada_entrada = com_camada_entrada
         self.__funcoes_ativacao = funcoes_ativacao
         for i in range(1, len(qtd_neuronios_camadas), 1):
             self.__camadas.append(Camada(qtd_neuronios_camadas[i],
@@ -28,9 +33,12 @@ class rnamlp():
 
     def forward(self, entrada):
         saida_camada_anterior = entrada
-        for camada in self.__camadas:
-            saida_camada_anterior = camada.propagar(saida_camada_anterior)
-
+        if self.__com_camada_entrada:
+            for camada in self.__camadas:
+                saida_camada_anterior = camada.propagar(saida_camada_anterior)
+        else:
+            for camada in self.__camadas[1:]:
+                saida_camada_anterior = camada.propagar(saida_camada_anterior)
         return saida_camada_anterior
 
     def backward(self, erros):
@@ -39,26 +47,22 @@ class rnamlp():
         for camada in self.__camadas[::-1]:
             erros = camada.corrigir(erros)
 
-    def __ciclo_treinamento(self, testes):
+    def __ciclo_treinamento(self, entradas, saidas):
         erro_medio_quadratico = 0
-        for teste in testes:
-            entrada = teste[:-1]
-            saidas_esperadas = teste[-1:]
+        for entrada, saidas_esperadas in zip(entradas, saidas):
             saida_rede = self.forward(entrada)
             erros = [saida_esperada - saida for saida_esperada, saida in zip(saidas_esperadas, saida_rede)]
             self.backward(erros)
-            erro_quadratico = sum([e ** 2 for e in erros])
-            erro_quadratico /= 2
-            erro_medio_quadratico += erro_quadratico
+            erro_medio_quadratico += sum([e ** 2 for e in erros]) / 2
 
-        erro_medio_quadratico /= len(testes)
+        erro_medio_quadratico /= len(entradas)
         return erro_medio_quadratico
 
-    def treinar(self, testes, ciclos = 1000000):
+    def treinar(self, entradas, saidas, ciclos = 1000000):
 
         erro_medio_quadratico_anterior = 0
         for ciclo in range(ciclos):
-            erro_medio_quadratico = self.__ciclo_treinamento(testes)
+            erro_medio_quadratico = self.__ciclo_treinamento(entradas, saidas)
             print("Ciclo {}  erro medio quadratico {}".format(str(ciclo), str(erro_medio_quadratico)))
             if erro_medio_quadratico <= self.__limiar_parada:
                 print("Atingiu o limiar de parada {} e {}".format(

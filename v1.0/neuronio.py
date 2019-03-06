@@ -5,9 +5,9 @@ import numpy as np
 
 class Neuronio():
     def __init__(self, taxa_aprendizagem, numero_entradas, funcao_ativacao=4):
-        self.__bias = round(random.uniform(-0.9, 0.9), 6)
+        self.__bias = random.uniform(-0.9, 0.9)
         # self.__w = np.random.randn(1, numero_entradas)[0]
-        self.__w = [round(random.uniform(-0.9, 0.9), 6) for _ in range(numero_entradas)]
+        self.__w = [random.uniform(-0.9, 0.9) for _ in range(numero_entradas)]
         self.__taxa_aprendizagem = taxa_aprendizagem
         self.__funcao_ativacao = funcao_ativacao
 
@@ -83,7 +83,7 @@ class Neuronio():
             return np.exp(-entrada)/((1.0 + np.exp(-entrada)) ** 2)
 
         elif funcao == 4:  # tanh'(x) = 1 - tanh(x)²
-            return 1.0 - self.funcao_ativacao(entrada, funcao) ** 2
+            return 1.0 - (2.0/(1.0 + np.exp(-2 * entrada)) - 1) ** 2
 
         elif funcao == 5:  # ReLU'(x) = {1, se x>=0; 0, se x<0}
             if entrada < 0:
@@ -96,7 +96,7 @@ class Neuronio():
             return 1
 
         elif funcao == 7:  # ELU'(x, a) = {1, x>=0; ELU(x, a) + a, x<0}
-            if entrada >=0:
+            if entrada >= 0:
                 return 1
             return self.funcao_ativacao(entrada, 7, a) + a
 
@@ -106,11 +106,11 @@ class Neuronio():
 
     def atualizar_pesos(self, dot_camada_adiante):
         self.calcular_delta(dot_camada_adiante)
-        self.__bias += round(self.__taxa_aprendizagem * self.__delta, 6)
+        self.__bias += self.__taxa_aprendizagem * self.__delta
 
         for i in range(len(self.__w)):
             ajuste = self.__taxa_aprendizagem * self.__delta * self.__y_entrada[i]
-            self.__w += round(ajuste, 6)
+            self.__w += ajuste
 
     def get_delta_fatores(self):
         delta_fatores = [self.__delta * w for w in self.__w]

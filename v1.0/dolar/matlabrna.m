@@ -1,7 +1,7 @@
 dados = importdata('dadosTreinamentoAumento-diarioDolarFuturo2002-2012.txt');
 
-n_neuronios_entrada = 30;
-n_linhas_treinamento = 1500;
+n_neuronios_entrada = 20;
+n_linhas_treinamento = 2000;
 
 XTrain = zeros(n_linhas_treinamento, n_neuronios_entrada, 'double');
 YTrain = zeros(n_linhas_treinamento, 1, 'double');

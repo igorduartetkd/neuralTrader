@@ -5,20 +5,23 @@ import numpy as np
 
 
 class rnamlp():
-    def __init__(self, qtd_neuronios_camadas=[2, 2, 1],
+    def __init__(self, qtd_neuronios_camadas=[2, 2, 2, 1],
                  taxa_aprendizagem=0.4,
-                 funcoes_ativacao=[[4, 4], [4, 4], [1]],
+                 funcoes_ativacao=[],
                  limiar_parada=0.01,
                  com_camada_entrada=True):
         self.__limiar_parada = limiar_parada
-        self.__camadas = [Camada(qtd_neuronios_camadas[0], taxa_aprendizagem, funcoes_ativacao=funcoes_ativacao[0])]
+        self.__camadas = []
+        #self.__camadas = [Camada(qtd_neuronios_camadas[0], taxa_aprendizagem, funcoes_ativacao=funcoes_ativacao[0])]
         self.__com_camada_entrada = com_camada_entrada
         self.__funcoes_ativacao = funcoes_ativacao
-        for i in range(1, len(qtd_neuronios_camadas), 1):
-            self.__camadas.append(Camada(qtd_neuronios_camadas[i],
+        if funcoes_ativacao == []:
+            self.__funcoes_ativacao = [[4 for _ in range(j)] for j in qtd_neuronios_camadas[1:]]
+        for i in range(len(qtd_neuronios_camadas) - 1):
+            self.__camadas.append(Camada(qtd_neuronios_camadas[i+1],
                                          taxa_aprendizagem,
-                                         qtd_neuronios_camadas[i-1],
-                                         funcoes_ativacao[i]))
+                                         qtd_neuronios_camadas[i],
+                                         self.__funcoes_ativacao[i]))
 
     def extrair_rede(self):
         pesos_camadas = [camada.get_pesos() for camada in self.__camadas]
@@ -33,12 +36,10 @@ class rnamlp():
 
     def forward(self, entrada):
         saida_camada_anterior = entrada
-        if self.__com_camada_entrada:
-            for camada in self.__camadas:
-                saida_camada_anterior = camada.propagar(saida_camada_anterior)
-        else:
-            for camada in self.__camadas[1:]:
-                saida_camada_anterior = camada.propagar(saida_camada_anterior)
+
+        for camada in self.__camadas:
+            saida_camada_anterior = camada.propagar(saida_camada_anterior)
+
         return saida_camada_anterior
 
     def backward(self, erros):

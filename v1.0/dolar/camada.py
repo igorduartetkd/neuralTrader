@@ -33,7 +33,7 @@ class Camada():
 
     def propagar(self, x):
         if len(x) != self.__qtd_camada_anterior:
-            print("Quantidade de entradas diferente da definida- metodo propagar da classe camada")
+            print("Quantidade de entradas = {} diferente da definida = {}- metodo propagar da classe camada".format(len(x), self.__qtd_camada_anterior))
 
         self.__y_camada = [neuronio.estimular(x) for neuronio in self.__neuronios]
         return self.__y_camada

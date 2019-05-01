@@ -19,7 +19,7 @@ trainFcn = 'trainrp';  % Scaled conjugate gradient backpropagation.
 %trainFcn = 'trainlm';
 
 % Create a Pattern Recognition Network
-hiddenLayerSize = [1 2 3 4 5];
+hiddenLayerSize = [20 20 20 20 20 20];
 net = patternnet(hiddenLayerSize, trainFcn);
 
 % Choose Input and Output Pre/Post-Processing Functions
@@ -31,8 +31,8 @@ net.input.processFcns = {'removeconstantrows','mapminmax'};
 net.divideFcn = 'dividetrain';  % Divide data randomly
 net.divideMode = 'sample';  % Divide up every sample
 net.divideParam.trainRatio = 50/100;
-net.divideParam.valRatio = 50/100;
-net.divideParam.testRatio = 0/100;
+net.divideParam.valRatio = 30/100;
+net.divideParam.testRatio = 20/100;
 
 % Choose a Performance Function
 % For a list of all performance functions type: help nnperformance
@@ -45,9 +45,9 @@ net.plotFcns = {'plotperform','plottrainstate','ploterrhist', ...
 
 net.trainParam.epochs = 10000;
 net.trainParam.goal = 0.00000001;
-net.trainParam.min_grad = 0.00000001
+net.trainParam.min_grad = 0.00000001;
 %net.performParam.regularization = 0.1;
-net.trainParam.max_fail = 10000
+net.trainParam.max_fail = 100000;
 
 % Train the Network
 [net,tr] = train(net,x,t);
@@ -55,7 +55,7 @@ net.trainParam.max_fail = 10000
 % Test the Network
 y = net(x);
 e = gsubtract(t,y);
-performance = perform(net,t,y)
+performance = perform(net,t,y);
 tind = vec2ind(t);
 yind = vec2ind(y);
 percentErrors = sum(tind ~= yind)/numel(tind);

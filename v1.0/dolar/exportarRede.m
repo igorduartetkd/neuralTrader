@@ -1,26 +1,28 @@
-IW = net.IW{1,1}; 
-LW = net.LW{2,1}; 
-b1 = net.b{1}; 
-b2 = net.b{2};
-dim_entrada = size(IW);
+
+dim_entrada = size(net.IW{1, 1});
 dim_entrada = dim_entrada(2);
-
-dlmwrite("saidaRedeMatlab.txt", IW, 'delimiter', ' ');
-entrada = zeros(dim_entrada, 'double');
-for i=1:dim_entrada
-    for j=1:dim_entrada
-        entrada(i, j) = 1;
-    end
+qtd_camadas = size(net.b);
+qtd_camadas = qtd_camadas(1);
+dimensoes(1) = dim_entrada;
+s = size(net.IW{1, 1});
+dimensoes(2) = s(1);
+for i=2:qtd_camadas
+    s = size(net.LW{i, i-1});
+    dimensoes(i+1) = s(1);
 end
-dlmwrite("primeiracamada.txt", entrada, 'delimiter', ' ');
-dlmwrite("segundacamada.txt", IW, 'delimiter', ' ');
-dlmwrite("camadasaida.txt", LW, 'delimiter', ' ');
-dlmwrite("b1.txt", b1, 'delimiter', ' ');
-dlmwrite("b2.txt", b2, 'delimiter', ' ');
+arq = "redeNeuralExtraidaMatlab2.txt"
+dlmwrite(arq, dimensoes, 'delimiter', ' ');
+% escrevendo dados da primeira camada
+IW = net.IW{1,1};
+dlmwrite(arq, IW,'delimiter', ' ', '-append');
+% escrevendo dados das outras camadas
+for i=2:qtd_camadas
+   LW = net.LW{i, i-1};
+   dlmwrite(arq, LW,'delimiter', ' ', '-append');
+end
 
-%qtd_camadas = size(net.b);
-%qtd_camadas = qtd_camadas(1);
-%dimensoes = [dim_entrada]
-%for i=1:qtd_camadas
-    
-%end
+% escrevendo biases
+for i=1:qtd_camadas
+    b = transpose(net.b{i});
+    dlmwrite(arq, b, 'delimiter', ' ', '-append');
+end

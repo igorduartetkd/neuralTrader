@@ -111,5 +111,5 @@ def armazenar_teste(arq, mini, maxi, teste, saida):
 
 arq_teste = open('arq-saida.txt', 'w')
 
-preparar(1500)
-get_treinamento(30, 1000)
+preparar(0)
+get_treinamento(10, 1000)

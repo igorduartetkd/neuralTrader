@@ -15,7 +15,7 @@ def getRegistrosSeparados(nome_ativo):
 
     text = file.readlines()
 
-    registros = {}
+    registros = []
 
     for linha in text:
         saida1 = re.search("^([^- ]*)[^{]*(.*)$", linha) # separando a data de captura dos dados
@@ -28,16 +28,42 @@ def getRegistrosSeparados(nome_ativo):
         dados = re.sub("}{", "},{", dados)
         dados = '{"itens": [' + dados + '] }'
         dados = json.loads(dados)
-        print("Data coleta: {}".format(dataConsulta))
+        #print("Data coleta: {}".format(dataConsulta))
         for atributo, valor in dados.items():
-            print("Dia: {} cotacoes encontradas: {}".format(datetime.datetime.fromtimestamp(valor[0]["date"]/1000.0),
-                                                             len(valor)))
-            cotacoes = {}
+            #print("Dia: {} cotacoes encontradas: {}".format(datetime.datetime.fromtimestamp(valor[0]["date"]/1000.0),
+            #                                                len(valor)))
+            cotacoes = []
             for cotacao in valor:
-                cotacoes[cotacao["date"]] = cotacao["price"]
+                cotacoes.append((cotacao["date"], cotacao["price"]))
 
-            registros[valor[0]["date"]] = cotacoes
+            registros.append(cotacoes)
     print("Cotacoes de {} dias carregados".format(len(registros)))
     return registros
 
-getRegistrosSeparados("PETR4.SA")
+#getRegistrosSeparados("PETR4.SA")
+
+
+
+
+
+
+
+
+def remover_primeira_ultima_hora(registros):
+    for dia in registros:
+        data_inicio = dia[-1][0]
+        data_fim = dia[0][0]
+        print("Antes: {}".format(len(dia)))
+        dia = [x for x in dia[::-1] if not is_primeira_ultima_hora(data_inicio, data_fim, x[0])]
+        print("Depois: {}".format(len(dia)))
+
+def is_primeira_ultima_hora(data_inicio, data_fim, data):
+    data_inicio = datetime.datetime.fromtimestamp(data_inicio / 1000.0)
+    data_fim = datetime.datetime.fromtimestamp(data_fim / 1000.0)
+    data = datetime.datetime.fromtimestamp(data / 1000.0)
+    print(data)
+    if (data - data_inicio).seconds < 3600:
+        return True
+    if (data_fim - data).seconds < 3600:
+        return True
+    return False

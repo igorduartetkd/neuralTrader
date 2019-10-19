@@ -1,83 +1,58 @@
-from calculadorEstatistico import normalizar
+import calculadorEstatistico
+import fonte
+import datetime
 
-list_data = []
-list_ultimo = []
-list_abertura = []
-list_maximo = []
-list_minimo = []
-list_volume = []
-list_variacao = []
-nome_arq_leitura = "dadosSeparados2000.txt"
-nome_arq_escrita_aumento = "dadosTreinamentoAumento.txt"
-nome_arq_escrita_adivinha = "dadosTreinamentoAdivinha.txt"
-arq_aumento = open(nome_arq_escrita_aumento, 'w')
-arq_adivinha = open(nome_arq_escrita_adivinha, 'w')
+registros = []
+nome_arq_escrita_aumento = "dadosTreinamento.txt"
+arq = open(nome_arq_escrita_aumento, 'w')
 
 def preparar():
-
-    arq1 = open(nome_arq_leitura, 'r')
-    linhas_arq1 = arq1.readlines()
-
-    for linha in linhas_arq1[::-1]:
-        splitado = linha.strip(' \n').split(' ')
-        list_data.append(splitado[0])
-        list_ultimo.append(float(splitado[1]))
-        list_abertura.append(float(splitado[2]))
-        list_maximo.append(float(splitado[3]))
-        list_minimo.append(float(splitado[4]))
-        list_volume.append(float(splitado[5]))
-        list_variacao.append(float(splitado[6]))
+    global registros
+    registros = fonte.getRegistrosSeparados('PETR4.SA')
 
 
-def get_treinamento(n_periodos, qtd_testes, tipo_teste='aumento'):
-    if qtd_testes + n_periodos + 5 >= len(list_ultimo):
-        print("Chegou no final do arquivo de {} ao prepararTreinamento -> getLinhaTreinamento".format(nome_arq_leitura))
+def remover_primeira_ultima_hora(registros):
+    novos_registros = []
+    for dia in registros:
+        data_inicio = dia[-1][0]
+        data_fim = dia[0][0]
+        dia = [x for x in dia[::-1] if not is_primeira_ultima_hora(data_inicio, data_fim, x[0])]
+        novos_registros.append(dia)
+    return novos_registros
 
-    testes_aumento = list()
-    saidas_aumento = list()
-    testes_adivinha = list()
-    saidas_adivinha = list()
-    for i in range(qtd_testes):
-        teste_aumento = list()
-        teste_adivinha = list()
-        for j in range(n_periodos):
-            teste_aumento.append(list_ultimo[i + j])
-            teste_adivinha.append(list_ultimo[i + j])
-        # teste de tendencia normaliza apenas dados de entrada
-        mini, maxi, teste_aumento = normalizar(teste_aumento)
-        resposta = -1
-        if list_ultimo[i + n_periodos - 1] * 0.039 < list_ultimo[i + n_periodos + 3] - list_ultimo[i + n_periodos - 1]:
-            resposta = 1
-        if list_ultimo[i + n_periodos - 1] * 0.039 < list_ultimo[i + n_periodos + 2] - list_ultimo[i + n_periodos - 1]:
-            resposta = 1
-        if list_ultimo[i + n_periodos - 1] * 0.039 < list_ultimo[i + n_periodos + 1] - list_ultimo[i + n_periodos - 1]:
-            resposta = 1
-        if list_ultimo[i + n_periodos - 1] * 0.039 < list_ultimo[i + n_periodos] - list_ultimo[i + n_periodos - 1]:
-            resposta = 1
-        '''
-        if -list_ultimo[i + n_periodos - 1] * 0.039 > list_ultimo[i + n_periodos] - list_ultimo[i + n_periodos - 1]:
-            resposta = -1
-        if -list_ultimo[i + n_periodos - 1] * 0.039 > list_ultimo[i + n_periodos + 1] - list_ultimo[i + n_periodos - 1]:
-            resposta = -1
-        if -list_ultimo[i + n_periodos - 1] * 0.039 > list_ultimo[i + n_periodos + 2] - list_ultimo[i + n_periodos - 1]:
-            resposta = -1
-        if -list_ultimo[i + n_periodos - 1] * 0.039 > list_ultimo[i + n_periodos + 3] - list_ultimo[i + n_periodos - 1]:
-            resposta = -1
-        '''
-        armazenar_teste(arq_aumento, mini, maxi, teste_aumento, resposta)
-        testes_aumento.append(teste_aumento)
-        saidas_aumento.append([resposta])
 
-        # teste de adivinhar normaliza entrada e saida
-        teste_adivinha.append(list_ultimo[i + n_periodos])
-        mini, maxi, teste_adivinha = normalizar(teste_adivinha)
-        testes_adivinha.append(teste_adivinha[:-1])
-        resposta = teste_adivinha[-1:][0]
-        saidas_adivinha.append(resposta)
-        armazenar_teste(arq_adivinha, mini, maxi, teste_adivinha[:-1], resposta)
-    if tipo_teste is "aumento":
-        return testes_aumento, saidas_aumento
-    return testes_adivinha, saidas_adivinha
+def is_primeira_ultima_hora(data_inicio, data_fim, data):
+    data_inicio = milis2data(data_inicio)
+    data_fim = milis2data(data_fim)
+    data = milis2data(data)
+    if (data - data_inicio).seconds < 3600:
+        return True
+    if (data_fim - data).seconds < 3600:
+        return True
+    return False
+
+
+def milis2data(milissegundos):
+    return datetime.datetime.fromtimestamp(milissegundos / 1000.0)
+
+
+def montar_linha_treinamento(dados):
+    media_ultimos = calculadorEstatistico.media(dados[-5:-1])
+    saida_esperada = 0
+    if media_ultimos < dados[:-1]:
+        saida_esperada = 1
+    elif media_ultimos < dados[:-1]:
+        saida_esperada = -1
+
+    mini, maxi, dados_normalizados = calculadorEstatistico.normalizar(dados[:-1])
+    armazenar_teste(arq, mini, maxi, dados_normalizados, saida_esperada)
+
+
+def criar_treinamento(janela_size):
+    global registros
+    preparar()
+    registros = remover_primeira_ultima_hora(registros)
+
 
 
 def armazenar_teste(arq, mini, maxi, teste, saida):
@@ -86,5 +61,13 @@ def armazenar_teste(arq, mini, maxi, teste, saida):
         arq.write(str(i) + ' ')
     arq.write(str(saida) + '\n')
 
-#preparar()
-#get_treinamento(20, 100)
+criar_treinamento(20)
+
+
+
+''' verificacao se existe um intervalo muito grande entre uma cotacao e outra
+for registro in registros:
+    for x, y in zip(registro[1:], registro):
+        if (milis2data(x[0]) - milis2data(y[0])).seconds > 360:
+            print("{} - {}  =  {}".format(milis2data(x[0]), milis2data(y[0]), milis2data(x[0]) - milis2data(y[0])))
+'''
